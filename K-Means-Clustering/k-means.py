@@ -16,9 +16,9 @@ class KMeans:
     def __init__(self, num_clusters=2, max_iterations=10):
         self.num_clusters = num_clusters        # number of clusters to group our data into
         self.max_iterations = max_iterations    # number of iterations to run the algorithm for
-        self.centroids = np.array([])  # Initialize centroids as an empty array
-        self.labels = np.array([])  # Initialize labels as an empty array
-        self.sum_of_squared_distances = []  # Initialize empty list to hold SSE distances for various cluster sizes
+        self.centroids = np.array([])           # Initialize centroids as an empty array
+        self.labels = np.array([])              # Initialize labels as an empty array
+        self.sum_of_squared_distances = []      # Initialize empty list to hold SSE distances for various cluster sizes
 
     def normalize_data(self, X: np.ndarray) -> np.ndarray:
         """_summary_
@@ -27,27 +27,18 @@ class KMeans:
             X (np.ndarray): The input data to be normalized
 
         Returns:
-            np.ndarray: Normalized and scaled version of input data
+            np.ndarray: Normalized version of input data
         """
-        min_scaled_value, max_scaled_value = 1, 10      # scaling our data to be between 1 to 10 value
-        # X.min() is minimum value in our entire dataset
-        # X.max() is maximum value in our entire dataset
-        # Normalization says - Subtract minimum value from every data point and divide it by the spread (aka difference between max and min)
-        X_normalized = (X - X.min()) / (X.max() - X.min())  # This normalizes our data in range 0 to 1
-        # We need data to be in 1-10 range. So, 0 needs to be mapped to 1 and 1 needs to be mapped to 10
-        # To do the above we use : normalized data * (desired max - desired min) + desired min
-        # For eg: X_norm = 0, then : X_norm_scaled = 0 * (10-1) + 1 = 1     (our original value which was 0 is now mapped to 1)
-        # Likewise, if X_norm = 1, then : X_norm_scaled = 1 * (10-1) + 1 = 10   (our original value which was 1 is now mapped to 10)
-        # Any value in between 0-1 for X_norm now gets scaled between 1-10 which is our desired range of min-max values we want in our dataset
-        X_norm_scaled = X_normalized * (max_scaled_value - min_scaled_value) + min_scaled_value     # scale our normalized 0-1 data to 1-10 range
-        return X_norm_scaled    # Returns our data in 150x2 original dimensions
+        X_min, X_max = X.min(axis=0), X.max(axis=0)
+
+        return (X - X_min) / (X_max - X_min + 1e-8)    # Returns our data in 150x2 original dimensions
 
     def initialize_centroids_kmeanspp(self, X: np.ndarray, K: int):
 
         n = X.shape[0]
         centroids = np.empty((K, X.shape[1]))
 
-        # randomly initialize first centroid
+        # randomly initialize first centroid using one of the existing rows of the original dataset
         centroids[0] = X[np.random.randint(n)]
 
         # Closest squared distance - this calculates squared distance from each data point to chose centroid
@@ -79,6 +70,7 @@ class KMeans:
         # Our answer is - number_of_centroids (K) x dimension_of_our_data (aka columns of X)
         self.centroids = np.random.uniform(low=X.min(axis=0), high=X.max(axis=0), size=(K, X.shape[1]))
 
+
     def assign_clusters(self, X: np.ndarray):
         """_summary_
         X: 150x2 matrix
@@ -94,7 +86,7 @@ class KMeans:
         # when we do X - centroids then - 150x1x2 (X) - 1x2x2 (centroids) becomes -> 150x2x2 (X) and 150x2x2 (centroids)
         # The 1 expands to match the dimension of the other array.
         # 150x2x2 = data_points x num_centroids x num_features (aka dimensions)
-        X_expanded = X[:,None,:]
+        X_expanded = X[:,None,:]    # 150x1x2
         centroids_expanded = self.centroids[None,:,:]   # 1x2x2
         # distances is now 150x2 but instead of it being data_points x features it is now, data_points x num_centroids
         # this means, our matrix now holds distance values of each data with each centroid
@@ -256,4 +248,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
     sys.exit(0)

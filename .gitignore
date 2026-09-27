@@ -3,6 +3,13 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# IDE
+*.vscode/*
+
+# Custom
+*.png
+*.jpg
+
 # C extensions
 *.so
 

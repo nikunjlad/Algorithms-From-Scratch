@@ -26,8 +26,8 @@ import numpy as np
 # ------------------------------------------------------
 
 # # ----- 2. Random 1D array initialization -----
-# seed = 42
-# rng = np.random.default_rng(seed)   # random number generator
+seed = 42
+rng = np.random.default_rng(seed)   # random number generator
 
 # # method 1 - Random 1D float array of 5 elements
 # Random function always gives values between 0-1 as uniform distribution
@@ -75,6 +75,6 @@ import numpy as np
 # -------------------------------------------------------
 
 
-
+rng.random
 
 
